@@ -1,25 +1,39 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace DigitalOceanV2\Api\GenAi;
 
 use DigitalOceanV2\Api\AbstractApi;
-use stdClass;
+use DigitalOceanV2\Entity\GenAi\KnowledgeBase as KnowledgeBaseEntity;
 
 class KnowledgeBase extends AbstractApi
 {
-    public function all(): stdClass
+    /**
+     * @return KnowledgeBaseEntity[]
+     */
+    public function all(): array
     {
-        return $this->get('gen-ai/knowledge_bases');
+        $response = $this->get('gen-ai/knowledge_bases');
+
+        return array_map(
+            fn ($kb) => new KnowledgeBaseEntity($kb),
+            $response->knowledge_bases
+        );
     }
 
-    public function create(array $data): stdClass
+    public function create(array $data): KnowledgeBaseEntity
     {
-        return $this->post('gen-ai/knowledge_bases', $data);
+        $response = $this->post('gen-ai/knowledge_bases', $data);
+
+        return new KnowledgeBaseEntity($response->knowledge_base);
     }
 
-    public function retrieve(string $uuid): stdClass
+    public function retrieve(string $uuid): KnowledgeBaseEntity
     {
-        return $this->get("gen-ai/knowledge_bases/{$uuid}");
+        $response = $this->get("gen-ai/knowledge_bases/{$uuid}");
+
+        return new KnowledgeBaseEntity($response->knowledge_base);
     }
 
     public function destroy(string $uuid): void

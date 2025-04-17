@@ -1,30 +1,47 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace DigitalOceanV2\Api\GenAi;
 
 use DigitalOceanV2\Api\AbstractApi;
+use DigitalOceanV2\Entity\GenAi\Agent as AgentEntity;
 use stdClass;
 
 class Agent extends AbstractApi
 {
-    public function all(): stdClass
+    /**
+     * @return AgentEntity[]
+     */
+    public function all(): array
     {
-        return $this->get('gen-ai/agents');
+        $response = $this->get('gen-ai/agents');
+
+        return array_map(
+            fn ($agent) => new AgentEntity($agent),
+            $response->agents
+        );
     }
 
-    public function create(array $data): stdClass
+    public function create(array $data): AgentEntity
     {
-        return $this->post('gen-ai/agents', $data);
+        $response = $this->post('gen-ai/agents', $data);
+
+        return new AgentEntity($response->agent);
     }
 
-    public function retrieve(string $uuid): stdClass
+    public function retrieve(string $uuid): AgentEntity
     {
-        return $this->get("gen-ai/agents/{$uuid}");
+        $response = $this->get("gen-ai/agents/{$uuid}");
+
+        return new AgentEntity($response->agent);
     }
 
-    public function update(string $uuid, array $data): stdClass
+    public function update(string $uuid, array $data): AgentEntity
     {
-        return $this->put("gen-ai/agents/{$uuid}", $data);
+        $response = $this->put("gen-ai/agents/{$uuid}", $data);
+
+        return new AgentEntity($response->agent);
     }
 
     public function destroy(string $uuid): void

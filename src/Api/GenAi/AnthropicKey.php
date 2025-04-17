@@ -1,30 +1,47 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace DigitalOceanV2\Api\GenAi;
 
 use DigitalOceanV2\Api\AbstractApi;
-use stdClass;
+use DigitalOceanV2\Entity\GenAi\AnthropicKey as AnthropicKeyEntity;
+use DigitalOceanV2\Entity\GenAi\Agent as AgentEntity;
 
 class AnthropicKey extends AbstractApi
 {
-    public function all(): stdClass
+    /**
+     * @return AnthropicKeyEntity[]
+     */
+    public function all(): array
     {
-        return $this->get('gen-ai/anthropic/keys');
+        $response = $this->get('gen-ai/anthropic/keys');
+
+        return array_map(
+            fn ($key) => new AnthropicKeyEntity($key),
+            $response->keys
+        );
     }
 
-    public function create(array $data): stdClass
+    public function create(array $data): AnthropicKeyEntity
     {
-        return $this->post('gen-ai/anthropic/keys', $data);
+        $response = $this->post('gen-ai/anthropic/keys', $data);
+
+        return new AnthropicKeyEntity($response->key);
     }
 
-    public function retrieve(string $uuid): stdClass
+    public function retrieve(string $uuid): AnthropicKeyEntity
     {
-        return $this->get("gen-ai/anthropic/keys/{$uuid}");
+        $response = $this->get("gen-ai/anthropic/keys/{$uuid}");
+
+        return new AnthropicKeyEntity($response->key);
     }
 
-    public function update(string $uuid, array $data): stdClass
+    public function update(string $uuid, array $data): AnthropicKeyEntity
     {
-        return $this->put("gen-ai/anthropic/keys/{$uuid}", $data);
+        $response = $this->put("gen-ai/anthropic/keys/{$uuid}", $data);
+
+        return new AnthropicKeyEntity($response->key);
     }
 
     public function destroy(string $uuid): void
@@ -32,8 +49,16 @@ class AnthropicKey extends AbstractApi
         $this->delete("gen-ai/anthropic/keys/{$uuid}");
     }
 
-    public function listAgents(string $uuid): stdClass
+    /**
+     * @return AgentEntity[]
+     */
+    public function listAgents(string $uuid): array
     {
-        return $this->get("gen-ai/anthropic/keys/{$uuid}/agents");
+        $response = $this->get("gen-ai/anthropic/keys/{$uuid}/agents");
+
+        return array_map(
+            fn ($agent) => new AgentEntity($agent),
+            $response->agents
+        );
     }
 }

@@ -1,30 +1,46 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace DigitalOceanV2\Api\GenAi;
 
 use DigitalOceanV2\Api\AbstractApi;
-use stdClass;
+use DigitalOceanV2\Entity\GenAi\OpenAiKey as OpenAiKeyEntity;
 
 class OpenAiKey extends AbstractApi
 {
-    public function all(): stdClass
+    /**
+     * @return OpenAiKeyEntity[]
+     */
+    public function all(): array
     {
-        return $this->get('gen-ai/openai/keys');
+        $response = $this->get('gen-ai/openai/keys');
+
+        return array_map(
+            fn ($key) => new OpenAiKeyEntity($key),
+            $response->keys
+        );
     }
 
-    public function create(array $data): stdClass
+    public function create(array $data): OpenAiKeyEntity
     {
-        return $this->post('gen-ai/openai/keys', $data);
+        $response = $this->post('gen-ai/openai/keys', $data);
+
+        return new OpenAiKeyEntity($response->key);
     }
 
-    public function retrieve(string $uuid): stdClass
+    public function retrieve(string $uuid): OpenAiKeyEntity
     {
-        return $this->get("gen-ai/openai/keys/{$uuid}");
+        $response = $this->get("gen-ai/openai/keys/{$uuid}");
+
+        return new OpenAiKeyEntity($response->key);
     }
 
-    public function update(string $uuid, array $data): stdClass
+    public function update(string $uuid, array $data): OpenAiKeyEntity
     {
-        return $this->put("gen-ai/openai/keys/{$uuid}", $data);
+        $response = $this->put("gen-ai/openai/keys/{$uuid}", $data);
+
+        return new OpenAiKeyEntity($response->key);
     }
 
     public function destroy(string $uuid): void
@@ -32,8 +48,16 @@ class OpenAiKey extends AbstractApi
         $this->delete("gen-ai/openai/keys/{$uuid}");
     }
 
-    public function listAgents(string $uuid): stdClass
+    /**
+     * @return AgentEntity[]
+     */
+    public function listAgents(string $uuid): array
     {
-        return $this->get("gen-ai/openai/keys/{$uuid}/agents");
+        $response = $this->get("gen-ai/openai/keys/{$uuid}/agents");
+
+        return array_map(
+            fn ($agent) => new \DigitalOceanV2\Entity\GenAi\Agent($agent),
+            $response->agents
+        );
     }
 }

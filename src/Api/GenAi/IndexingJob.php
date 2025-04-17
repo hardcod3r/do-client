@@ -1,14 +1,24 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace DigitalOceanV2\Api\GenAi;
 
 use DigitalOceanV2\Api\AbstractApi;
-use stdClass;
+use DigitalOceanV2\Entity\GenAi\IndexingJob as IndexingJobEntity;
 
 class IndexingJob extends AbstractApi
 {
-    public function all(): stdClass
+    /**
+     * @return IndexingJobEntity[]
+     */
+    public function all(): array
     {
-        return $this->get('gen-ai/indexing_jobs');
+        $response = $this->get('gen-ai/indexing_jobs');
+
+        return array_map(
+            fn ($job) => new IndexingJobEntity($job),
+            $response->indexing_jobs
+        );
     }
 }

@@ -37,6 +37,13 @@ use DigitalOceanV2\Api\Snapshot;
 use DigitalOceanV2\Api\Tag;
 use DigitalOceanV2\Api\Volume;
 use DigitalOceanV2\Api\Vpc;
+use DigitalOceanV2\Api\GenAi\Agent;
+use DigitalOceanV2\Api\GenAi\AgentRelationship;
+use DigitalOceanV2\Api\GenAi\OpenAiKey;
+use DigitalOceanV2\Api\GenAi\AnthropicKey;
+use DigitalOceanV2\Api\GenAi\KnowledgeBase;
+use DigitalOceanV2\Api\GenAi\IndexingJob;
+
 use DigitalOceanV2\HttpClient\Builder;
 use DigitalOceanV2\HttpClient\Message\ResponseMediator;
 use DigitalOceanV2\HttpClient\Plugin\Authentication;
@@ -212,6 +219,38 @@ class Client
     {
         return new Vpc($this);
     }
+
+    public function genAiAgent(): Agent
+    {
+        return new Agent($this);
+    }
+
+    public function genAiAgentRelationships(): AgentRelationship
+    {
+        return new AgentRelationship($this);
+    }
+
+    public function genAiOpenAiKeys(): OpenAiKey
+    {
+        return new OpenAiKey($this);
+    }
+
+    public function genAiAnthropicKeys(): AnthropicKey
+    {
+        return new AnthropicKey($this);
+    }
+
+    public function genAiKnowledgeBases(): KnowledgeBase
+    {
+        return new KnowledgeBase($this);
+    }
+
+    public function genAiIndexingJobs(): IndexingJob
+    {
+        return new IndexingJob($this);
+    }
+
+
 
     public function authenticate(string $token): void
     {
